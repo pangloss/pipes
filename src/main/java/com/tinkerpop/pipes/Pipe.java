@@ -28,15 +28,33 @@ public interface Pipe<S, E> extends Iterator<E>, Iterable<E> {
     public void setStarts(Iterable<S> starts);
 
     /**
-     * Turns on the additional caching and logic that is needed
-     * to calculate paths. Enabling paths requires more memory and
-     * processing, so will be slightly slower.
+     * Returns an iterable object that lazily evaluates the path traversed for each
+     * iteration of the result of the pipe.
+     *
+     * If you wish to do normal iteration but also use the getPath method, you
+     * will need to call this method before iteration.
+     *
+     * When implementing getPaths you must call this method on the pipe(s) that
+     * feed into your pipe. The return in that case may be discarded.
+     *
+     * Note that although under most conditions this method will not cause the
+     * pipe to use substantially more memory than normal, using it with (for
+     * example) a CopySplitPipe together with an ExhaustiveMergePipe will cause
+     * it to store all iterated paths leading up to the split pipe in memory
+     * before releasing those objects as it emits the results of the last split
+     * branch.
+     *
+     * @return an iterable of lists that represent each object traversed
+     * including the original source element, the result of the current pipe.
      */
-    public void enablePath();
+    public Iterable<List> getPaths();
 
     /**
      * Returns the path traversed to arrive at the current result of
      * the pipe.
+     *
+     * This method will raise an UnsupportedOperationException exception if
+     * getPaths has not been called before iteration has begun.
      *
      * @return an ArrayList of all of the objects of various types
      *         traversed for the current iterator position of the pipe.
