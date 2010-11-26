@@ -3,6 +3,7 @@ package com.tinkerpop.pipes.merge;
 import com.tinkerpop.pipes.AbstractPipe;
 import com.tinkerpop.pipes.Pipe;
 import com.tinkerpop.pipes.PipeHelper;
+import com.tinkerpop.pipes.PathSequence;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,19 +27,20 @@ public abstract class AbstractMergePipe<S> extends AbstractPipe<Iterator<S>, S> 
         this.starts = this.allStarts.iterator();
     }
 
-    public void enablePath() {
+    public Iterable<List> getPaths() {
         this.pathEnabled = true;
         for (Iterator<S> start : this.allStarts) {
             if (start instanceof Pipe) {
                 Pipe pipe = (Pipe) start;
-                pipe.enablePath();
+                pipe.getPaths();
             }
         }
+        return new PathSequence(this, true);
     }
 
     public List getPath() {
         if (!this.pathEnabled) {
-            throw new UnsupportedOperationException("To use path(), you must call enablePath() before iteration begins");
+            throw new UnsupportedOperationException("To use path(), you must call getPaths() before iteration begins");
         }
         if (this.currentEnds != null) {
             if (this.currentEnds instanceof Pipe) {

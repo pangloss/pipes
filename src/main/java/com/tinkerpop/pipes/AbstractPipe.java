@@ -40,22 +40,23 @@ public abstract class AbstractPipe<S, E> implements Pipe<S, E> {
         this.setStarts(starts.iterator());
     }
 
-    public void enablePath() {
+    public Iterable<List> getPaths() {
         this.pathEnabled = true;
         if (this.starts instanceof Pipe) {
             Pipe pipe = (Pipe) this.starts;
-            pipe.enablePath();
+            pipe.getPaths();
         } else if (ensurePipeStarts && null != this.starts) {
             IdentityPipe<S> pipe = new IdentityPipe<S>();
             pipe.setStarts(starts);
-            pipe.enablePath();
+            pipe.getPaths();
             this.starts = pipe;
         }
+        return new PathSequence(this, true);
     }
 
     public List getPath() {
         if (!this.pathEnabled) {
-            throw new UnsupportedOperationException("To use path(), you must call enablePath() before iteration begins");
+            throw new UnsupportedOperationException("To use path(), you must call getPaths() before iteration begins");
         }
         List pathElements = getPathToHere();
         int size = pathElements.size();

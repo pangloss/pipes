@@ -48,9 +48,7 @@ public class PathSequenceTest extends BaseTest {
     public void testPathSequencing() {
         Graph graph = TinkerGraphFactory.createTinkerGraph();
         Vertex marko = graph.getVertex("1");
-        PathSequence paths = new PathSequence(outE_inV_Property(marko, "name"));
-
-        for (List path : paths) {
+        for (List path : outE_inV_Property(marko, "name").getPaths()) {
             String name = (String) path.get(path.size() - 1);
             assertEquals(path.get(0), marko);
             assertEquals(path.get(1).getClass(), TinkerEdge.class);
@@ -82,7 +80,6 @@ public class PathSequenceTest extends BaseTest {
         Pipe<Vertex, Object> agePipe = outE_inV_Property(marko, "age");
         ExhaustiveMergePipe<Object> mergePipe = new ExhaustiveMergePipe<Object>();
         mergePipe.setStarts(Arrays.asList(namePipe.iterator(), agePipe.iterator()).iterator());
-        PathSequence paths = new PathSequence(mergePipe);
         Iterator<String> expected = Arrays.asList(
             "[v[1], e[7][1-knows->2], v[2], vadas]",
             "[v[1], e[9][1-created->3], v[3], lop]",
@@ -90,7 +87,7 @@ public class PathSequenceTest extends BaseTest {
             "[v[1], e[7][1-knows->2], v[2], 27]",
             "[v[1], e[9][1-created->3], v[3], null]",
             "[v[1], e[8][1-knows->4], v[4], 32]").iterator();
-        for (List path : paths) {
+        for (List path : mergePipe.getPaths()) {
             assertEquals(path.toString(), expected.next());
             //System.out.println(path);
         }
@@ -103,7 +100,6 @@ public class PathSequenceTest extends BaseTest {
         Pipe<Vertex, Object> agePipe = outE_inV_Property(marko, "age");
         RobinMergePipe<Object> mergePipe = new RobinMergePipe<Object>();
         mergePipe.setStarts(Arrays.asList(namePipe.iterator(), agePipe.iterator()).iterator());
-        PathSequence paths = new PathSequence(mergePipe);
         Iterator<String> expected = Arrays.asList(
             "[v[1], e[7][1-knows->2], v[2], vadas]",
             "[v[1], e[7][1-knows->2], v[2], 27]",
@@ -111,7 +107,7 @@ public class PathSequenceTest extends BaseTest {
             "[v[1], e[9][1-created->3], v[3], null]",
             "[v[1], e[8][1-knows->4], v[4], josh]",
             "[v[1], e[8][1-knows->4], v[4], 32]").iterator();
-        for (List path : paths) {
+        for (List path : mergePipe.getPaths()) {
             assertEquals(path.toString(), expected.next());
             //System.out.println(path);
         }
@@ -125,14 +121,13 @@ public class PathSequenceTest extends BaseTest {
         Pipe<Vertex, Vertex> source2 = inE_outV(Arrays.asList(vadas).iterator());
         RobinMergePipe<Vertex> mergePipe = new RobinMergePipe<Vertex>();
         mergePipe.setStarts(Arrays.asList(source1.iterator(), source2.iterator()).iterator());
-        PathSequence paths = new PathSequence(outE_inV(mergePipe.iterator()));
         Iterator<String> expected = Arrays.asList(
             "[v[2], e[7][1-knows->2], v[1], e[7][1-knows->2], v[2]]",
             "[v[2], e[7][1-knows->2], v[1], e[9][1-created->3], v[3]]",
             "[v[2], e[7][1-knows->2], v[1], e[8][1-knows->4], v[4]]",
             "[v[1], e[8][1-knows->4], v[4], e[10][4-created->5], v[5]]",
             "[v[1], e[8][1-knows->4], v[4], e[11][4-created->3], v[3]]").iterator();
-        for (List path : paths) {
+        for (List path : outE_inV(mergePipe.iterator()).getPaths()) {
             assertEquals(path.toString(), expected.next());
             //System.out.println(path);
         }
@@ -144,8 +139,6 @@ public class PathSequenceTest extends BaseTest {
         Pipe<Vertex, Vertex> source = outE_inV(Arrays.asList(marko).iterator());
         SplitPipe<Vertex> split = new CopySplitPipe<Vertex>(2);
         split.setStarts(source.iterator());
-        PathSequence paths1 = new PathSequence(split.getSplit(0));
-        PathSequence paths2 = new PathSequence(split.getSplit(1));
 
         List expected = Arrays.asList(
             "[v[1], e[7][1-knows->2], v[2]]",
@@ -156,12 +149,12 @@ public class PathSequenceTest extends BaseTest {
             "[v[1], e[8][1-knows->4], v[4]]"
         );
         Iterator<String> expected1 = expected.iterator();
-        for (List path : paths1) {
+        for (List path : split.getSplit(0).getPaths()) {
             //System.out.println(path);
             assertEquals(path.toString(), expected1.next());
         }
         Iterator<String> expected2 = expected.iterator();
-        for (List path : paths2) {
+        for (List path : split.getSplit(1).getPaths()) {
             assertEquals(path.toString(), expected2.next());
         }
     }
@@ -172,8 +165,6 @@ public class PathSequenceTest extends BaseTest {
         Pipe<Vertex, Vertex> source = outE_inV(Arrays.asList(marko).iterator());
         SplitPipe<Vertex> split = new CopySplitPipe<Vertex>(2);
         split.setStarts(source.iterator());
-        PathSequence paths1 = new PathSequence(inE_outV(split.getSplit(0)));
-        PathSequence paths2 = new PathSequence(inE_outV(split.getSplit(1)));
 
         List expected = Arrays.asList(
             "[v[1], e[7][1-knows->2], v[2], e[7][1-knows->2], v[1]]",
@@ -187,7 +178,7 @@ public class PathSequenceTest extends BaseTest {
             "[v[1], e[9][1-created->3], v[3], e[12][6-created->3], v[6]]"
         );
         Iterator<String> expected1 = expected.iterator();
-        for (List path : paths1) {
+        for (List path : inE_outV(split.getSplit(0)).getPaths()) {
             String e = expected1.next();
             //System.out.println("actual, expected:");
             //System.out.println(path);
@@ -195,7 +186,7 @@ public class PathSequenceTest extends BaseTest {
             assertEquals(path.toString(), e);
         }
         Iterator<String> expected2 = expected.iterator();
-        for (List path : paths2) {
+        for (List path : inE_outV(split.getSplit(1)).getPaths()) {
             assertEquals(path.toString(), expected2.next());
         }
     }
@@ -211,7 +202,6 @@ public class PathSequenceTest extends BaseTest {
         MergePipe<Vertex> merge = new ExhaustiveMergePipe<Vertex>();
         //NOTE: incoming and outgoing are defined in the wrong order here:
         merge.setStarts(Arrays.asList(incoming.iterator(), outgoing.iterator()).iterator());
-        PathSequence paths = new PathSequence(merge);
 
         Iterator<String> expected = Arrays.asList(
             "[v[1], e[7][1-knows->2], v[2], e[7][1-knows->2], v[1]]",
@@ -222,7 +212,7 @@ public class PathSequenceTest extends BaseTest {
             "[v[1], e[8][1-knows->4], v[4], e[10][4-created->5], v[5]]",
             "[v[1], e[8][1-knows->4], v[4], e[11][4-created->3], v[3]]"
         ).iterator();
-        for (List path : paths) {
+        for (List path : merge.getPaths()) {
             //System.out.println(path);
             assertEquals(path.toString(), expected.next());
         }
@@ -239,7 +229,6 @@ public class PathSequenceTest extends BaseTest {
         MergePipe<Vertex> merge = new ExhaustiveMergePipe<Vertex>();
         //NOTE: incoming and outgoing are defined in the wrong order here:
         merge.setStarts(Arrays.asList(incoming.iterator(), outgoing.iterator()).iterator());
-        PathSequence paths = new PathSequence(outE_inV(merge.iterator()));
 
         Iterator<String> expected = Arrays.asList(
             "[v[1], e[7][1-knows->2], v[2], e[7][1-knows->2], v[1], e[7][1-knows->2], v[2]]",
@@ -255,7 +244,7 @@ public class PathSequenceTest extends BaseTest {
             "[v[1], e[8][1-knows->4], v[4], e[8][1-knows->4], v[1], e[9][1-created->3], v[3]]",
             "[v[1], e[8][1-knows->4], v[4], e[8][1-knows->4], v[1], e[8][1-knows->4], v[4]]"
         ).iterator();
-        for (List path : paths) {
+        for (List path : outE_inV(merge.iterator()).getPaths()) {
             //System.out.println(path);
             assertEquals(path.toString(), expected.next());
         }

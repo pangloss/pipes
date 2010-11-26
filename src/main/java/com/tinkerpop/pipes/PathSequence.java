@@ -12,7 +12,14 @@ public class PathSequence implements Iterable<List>, Iterator<List> {
 
     public PathSequence(final Pipe pipe) {
         this.pipe = pipe;
-        this.pipe.enablePath();
+        pipe.getPaths();
+    }
+
+    public PathSequence(final Pipe pipe, boolean enabled) {
+        this.pipe = pipe;
+        if (!enabled) {
+            pipe.getPaths();
+        }
     }
 
     public void remove() {

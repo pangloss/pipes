@@ -2,6 +2,7 @@ package com.tinkerpop.pipes.split;
 
 import com.tinkerpop.pipes.AbstractPipe;
 import com.tinkerpop.pipes.Pipe;
+import com.tinkerpop.pipes.PathSequence;
 
 import java.util.*;
 
@@ -114,14 +115,15 @@ public abstract class AbstractSplitPipe<S> extends AbstractPipe<S, S> implements
             }
         }
 
-        public void enablePath() {
-            this.splitPipe.enablePath();
+        public Iterable<List> getPaths() {
+            this.splitPipe.getPaths();
             this.pathEnabled = true;
+            return new PathSequence(this, true);
         }
 
         public List getPath() {
             if (!this.pathEnabled) {
-                throw new UnsupportedOperationException("To use path(), you must call enablePath() before iteration begins");
+                throw new UnsupportedOperationException("To use path(), you must call getPaths() before iteration begins");
             }
             List<?> path = new ArrayList();
             path.addAll(this.currentPath);
