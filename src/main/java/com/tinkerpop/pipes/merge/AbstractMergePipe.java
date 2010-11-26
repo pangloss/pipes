@@ -35,7 +35,7 @@ public abstract class AbstractMergePipe<S> extends AbstractPipe<Iterator<S>, S> 
                 pipe.getPaths();
             }
         }
-        return new PathSequence(this);
+        return new PathSequence(this, true);
     }
 
     public List getPath() {

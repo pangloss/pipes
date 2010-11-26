@@ -118,7 +118,7 @@ public abstract class AbstractSplitPipe<S> extends AbstractPipe<S, S> implements
         public Iterable<List> getPaths() {
             this.splitPipe.getPaths();
             this.pathEnabled = true;
-            return new PathSequence(this);
+            return new PathSequence(this, true);
         }
 
         public List getPath() {

@@ -51,7 +51,7 @@ public abstract class AbstractPipe<S, E> implements Pipe<S, E> {
             pipe.getPaths();
             this.starts = pipe;
         }
-        return new PathSequence(this);
+        return new PathSequence(this, true);
     }
 
     public List getPath() {
