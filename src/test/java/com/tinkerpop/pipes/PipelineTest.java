@@ -40,7 +40,7 @@ public class PipelineTest extends TestCase {
         while (pipeline.hasNext()) {
             Edge e = pipeline.next();
             assertEquals(expectedEnds.next(), e.getInVertex());
-            List path = pipeline.getPath();
+            List path = pipeline.getPathForCurrentEnd();
             assertEquals(expectedPaths.next(), path.toString());
             counter++;
         }
@@ -60,7 +60,7 @@ public class PipelineTest extends TestCase {
         pipeline.getPaths();
         while (pipeline.hasNext()) {
             assertEquals(pipeline.next().getId(), "3");
-            List path = pipeline.getPath();
+            List path = pipeline.getPathForCurrentEnd();
             if (counter == 0) {
                 assertEquals(path, Arrays.asList(graph.getVertex("1"), graph.getEdge(9), graph.getVertex(3)));
             }
@@ -163,7 +163,7 @@ public class PipelineTest extends TestCase {
         pipeline.getPaths();
 
         for (String name : pipeline) {
-            List path = pipeline.getPath();
+            List path = pipeline.getPathForCurrentEnd();
             assertEquals(path.get(0), marko);
             assertEquals(path.get(1).getClass(), TinkerEdge.class);
             assertEquals(path.get(2).getClass(), TinkerVertex.class);
@@ -184,7 +184,7 @@ public class PipelineTest extends TestCase {
                 assertFalse(true);
             }
             //System.out.println(name);
-            //System.out.println(pipeline.getPath());
+            //System.out.println(pipeline.getPathForCurrentEnd());
         }
     }
 
@@ -201,7 +201,7 @@ public class PipelineTest extends TestCase {
         pipeline.getPaths();
 
         for (String name : pipeline) {
-            List path = pipeline.getPath();
+            List path = pipeline.getPathForCurrentEnd();
             assertEquals(path.get(0), marko);
             assertEquals(path.get(1).getClass(), TinkerEdge.class);
             assertEquals(path.get(2).getClass(), TinkerVertex.class);

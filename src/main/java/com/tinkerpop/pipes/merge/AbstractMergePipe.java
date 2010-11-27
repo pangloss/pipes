@@ -38,14 +38,14 @@ public abstract class AbstractMergePipe<S> extends AbstractPipe<Iterator<S>, S> 
         return new PathSequence(this, true);
     }
 
-    public List getPath() {
+    public List getPathForCurrentEnd() {
         if (!this.pathEnabled) {
             throw new UnsupportedOperationException("To use path(), you must call getPaths() before iteration begins");
         }
         if (this.currentEnds != null) {
             if (this.currentEnds instanceof Pipe) {
                 Pipe pipe = (Pipe) this.currentEnds;
-                return pipe.getPath();
+                return pipe.getPathForCurrentEnd();
             } else {
                 return new ArrayList();
             }

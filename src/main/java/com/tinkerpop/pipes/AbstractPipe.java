@@ -54,7 +54,7 @@ public abstract class AbstractPipe<S, E> implements Pipe<S, E> {
         return new PathSequence(this, true);
     }
 
-    public List getPath() {
+    public List getPathForCurrentEnd() {
         if (!this.pathEnabled) {
             throw new UnsupportedOperationException("To use path(), you must call getPaths() before iteration begins");
         }
@@ -106,7 +106,7 @@ public abstract class AbstractPipe<S, E> implements Pipe<S, E> {
     protected List getPathToHere() {
         if (this.starts instanceof Pipe) {
             Pipe pipe = (Pipe) this.starts;
-            return pipe.getPath();
+            return pipe.getPathForCurrentEnd();
         } else {
             return new ArrayList();
         }

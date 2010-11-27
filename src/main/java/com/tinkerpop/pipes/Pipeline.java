@@ -125,8 +125,8 @@ public class Pipeline<S, E> implements Pipe<S, E> {
         return endPipe.getPaths();
     }
 
-    public List getPath() {
-        return endPipe.getPath();
+    public List getPathForCurrentEnd() {
+        return endPipe.getPathForCurrentEnd();
     }
 
     /**

@@ -32,7 +32,7 @@ public class PathSequence implements Iterable<List>, Iterator<List> {
 
     public List next() {
         this.pipe.next();
-        return this.pipe.getPath();
+        return this.pipe.getPathForCurrentEnd();
     }
 
     public boolean hasNext() {
