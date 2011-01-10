@@ -32,17 +32,17 @@ public class VertexEdgePipe extends AbstractPipe<Vertex, Edge> {
             if (null != this.nextEnds && this.nextEnds.hasNext()) {
                 return this.nextEnds.next();
             } else {
+                Vertex vertex = this.starts.next();
                 switch (this.step) {
                     case OUT_EDGES: {
-                        this.nextEnds = this.starts.next().getOutEdges().iterator();
+                        this.nextEnds = vertex.getOutEdges().iterator();
                         break;
                     }
                     case IN_EDGES: {
-                        this.nextEnds = this.starts.next().getInEdges().iterator();
+                        this.nextEnds = vertex.getInEdges().iterator();
                         break;
                     }
                     case BOTH_EDGES: {
-                        Vertex vertex = this.starts.next();
                         this.nextEnds = new MultiIterator<Edge>(vertex.getInEdges().iterator(), vertex.getOutEdges().iterator());
                         break;
                     }
