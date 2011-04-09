@@ -4,6 +4,7 @@ import com.tinkerpop.blueprints.pgm.Edge;
 import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.Vertex;
 import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraphFactory;
+import com.tinkerpop.pipes.Pipe;
 import com.tinkerpop.pipes.Pipeline;
 import com.tinkerpop.pipes.filter.ComparisonFilterPipe;
 import junit.framework.TestCase;
@@ -19,8 +20,8 @@ public class IdCollectionFilterPipeTest extends TestCase {
     public void testFilterIdsCollection1() {
         Graph graph = TinkerGraphFactory.createTinkerGraph();
         Vertex marko = graph.getVertex("1");
-        VertexEdgePipe pipe1 = new VertexEdgePipe(VertexEdgePipe.Step.OUT_EDGES);
-        EdgeVertexPipe pipe2 = new EdgeVertexPipe(EdgeVertexPipe.Step.IN_VERTEX);
+        Pipe pipe1 = new OutEdgesPipe();
+        Pipe pipe2 = new InVertexPipe();
         IdCollectionFilterPipe pipe3 = new IdCollectionFilterPipe(Arrays.asList("3"), ComparisonFilterPipe.Filter.NOT_EQUAL);
         Pipeline<Vertex,Vertex> pipeline = new Pipeline<Vertex,Vertex>(pipe1, pipe2, pipe3);
         pipeline.setStarts(Arrays.asList(marko));
@@ -36,8 +37,8 @@ public class IdCollectionFilterPipeTest extends TestCase {
      public void testFilterIdsCollection2() {
         Graph graph = TinkerGraphFactory.createTinkerGraph();
         Vertex marko = graph.getVertex("1");
-        VertexEdgePipe pipe1 = new VertexEdgePipe(VertexEdgePipe.Step.OUT_EDGES);
-        EdgeVertexPipe pipe2 = new EdgeVertexPipe(EdgeVertexPipe.Step.IN_VERTEX);
+        Pipe pipe1 = new OutEdgesPipe();
+        Pipe pipe2 = new InVertexPipe();
         IdCollectionFilterPipe pipe3 = new IdCollectionFilterPipe(Arrays.asList("3"), ComparisonFilterPipe.Filter.EQUAL);
         Pipeline<Vertex,Vertex> pipeline = new Pipeline<Vertex,Vertex>(pipe1, pipe2, pipe3);
         pipeline.setStarts(Arrays.asList(marko));
